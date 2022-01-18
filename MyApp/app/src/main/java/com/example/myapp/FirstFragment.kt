@@ -11,6 +11,7 @@ import com.example.myapp.databinding.FragmentFirstBinding
 import android.graphics.BitmapFactory
 
 import android.graphics.Bitmap
+import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
@@ -70,11 +71,11 @@ class FirstFragment : Fragment() {
                     }
                 }
             }
+        }
 
-
-            //TODO : Method call should happen from the main thread; -> changer le lifecyclescope.
-            //"""[{"breeds":[],"id":"3kg","url":"https://cdn2.thecatapi.com/images/3kg.jpg","width":500,"height":346}]"""
-
+        binding.addButton.setOnClickListener{
+            val bundle = bundleOf("imgUrl" to imgUrl)
+            findNavController().navigate(R.id.action_FirstFragment_to_ThirdFragment, bundle)
         }
     }
 
