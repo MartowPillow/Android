@@ -1,6 +1,7 @@
 package com.example.myapp
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.util.LogPrinter
@@ -20,6 +21,9 @@ import com.squareup.picasso.Picasso
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.encodeToJsonElement
 
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
@@ -46,10 +50,20 @@ class ThirdFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         var imgUrl: String = arguments?.getString("imgUrl").toString()
-        Picasso.with(context)
-            .load(imgUrl)
-            .into(binding.validView);
-
+        if(imgUrl != "") {
+            Picasso.with(context)
+                .load(imgUrl)
+                .into(binding.validView);
+        }
+        else{
+            val toast = Toast.makeText(
+                activity?.applicationContext,
+                "You have to get a cat to add it to your favorites",
+                Toast.LENGTH_LONG
+            )
+            toast.show()
+            findNavController().navigate(R.id.action_ThirdFragment_to_FirstFragment)
+        }
         binding.cancelButton.setOnClickListener {
             findNavController().navigate(R.id.action_ThirdFragment_to_FirstFragment)
         }
@@ -57,16 +71,17 @@ class ThirdFragment : Fragment() {
         binding.validButton.setOnClickListener {
             val name: String = binding.inputName.text.toString()
             val cat: Cell = Cell(name,imgUrl)
-            val txt: String = Json.encodeToString(cat)
+            val jsonCat: JsonElement = Json.encodeToJsonElement(cat)
 
-            //TODO: Serialize cat
-            val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
+            val sharedPref = context?.getSharedPreferences("global",Context.MODE_PRIVATE)
+            var stringCatArray = sharedPref?.getString("json","")
+            val jsonCatArray: JsonArray = Json.decodeFromString<JsonArray>(stringCatArray!!)
+            stringCatArray = Json.encodeToString(jsonCatArray.plus(jsonCat))
+
             val edit = sharedPref?.edit()
-            edit?.putString("json" , txt)
+            edit?.putString("json" , stringCatArray)
             edit?.apply()
-            val truc = sharedPref?.all
-            println(truc)
-
+            println(sharedPref?.all)
 
             val toast = Toast.makeText(
                 activity?.applicationContext,

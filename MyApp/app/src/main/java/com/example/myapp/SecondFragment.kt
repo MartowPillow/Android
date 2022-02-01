@@ -1,5 +1,6 @@
 package com.example.myapp
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -25,6 +26,11 @@ class SecondFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
+    private var cellsList = ArrayList<Cell>()
+    private var recyclerView: RecyclerView? = null
+    private var recyclerviewCellAdapter: RecyclerviewCellAdapter? = null
+    private val myViewModel: MyViewModel by viewModels()
+
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
@@ -35,21 +41,18 @@ class SecondFragment : Fragment() {
 
     }
 
-    private var cellsList = ArrayList<Cell>()
-    private var recyclerView: RecyclerView? = null
-    private var recyclerviewCellAdapter: RecyclerviewCellAdapter? = null
-    private val myViewModel: MyViewModel by viewModels()
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        val sharedPref = context?.getSharedPreferences("global",Context.MODE_PRIVATE)
+        val initialCats = sharedPref?.getString("json","")
+        myViewModel.setInitialCats(initialCats)
         myViewModel.getCells().observe(viewLifecycleOwner, Observer<List<Cell>>{ cells ->
             cellsList.addAll(cells)
         })
 
         recyclerView = view.findViewById(R.id.favRecycler)
 
-        recyclerviewCellAdapter = RecyclerviewCellAdapter(cellsList)
+        recyclerviewCellAdapter = RecyclerviewCellAdapter(cellsList, context)
         recyclerView?.setHasFixedSize(true)
 
         val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(view.context)
@@ -57,8 +60,6 @@ class SecondFragment : Fragment() {
         recyclerView?.setLayoutManager(layoutManager)
         recyclerView?.setItemAnimator(DefaultItemAnimator())
         recyclerView?.setAdapter(recyclerviewCellAdapter)
-
-
 
         binding.buttonSecond.setOnClickListener {
             findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
