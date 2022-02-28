@@ -28,16 +28,14 @@ import java.io.InputStreamReader
 
 
 /**
- * A simple [Fragment] subclass as the default destination in the navigation.
+ * Display random cats
  */
 class FirstFragment : Fragment() {
 
     private var _binding: FragmentFirstBinding? = null
-    private var imgUrl = ""
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
+
+    private var imgUrl = ""
 
 
     override fun onCreateView(
@@ -53,25 +51,28 @@ class FirstFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //Go to 'favorites' page
         binding.buttonFirst.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
         }
 
+        //Show a random cat
         binding.shuffleButton.setOnClickListener{
             val url = URL("https://api.thecatapi.com/v1/images/search")
             lifecycleScope.launchWhenCreated {
                 withContext(Dispatchers.IO) {
-                    var txt = url.readText()
+                    var txt = url.readText() //get json string from api
                     txt = txt.subSequence(1, txt.lastIndex) as String
                     val json = JSONObject(txt)
-                    imgUrl = json.getString("url")
+                    imgUrl = json.getString("url") //retrieve cat image url
                     lifecycleScope.launch {
-                        binding.imageView.load(imgUrl)
+                        binding.imageView.load(imgUrl) //display image on ImageView
                     }
                 }
             }
         }
 
+        //Go to 'add to favorites' page, with the image Url
         binding.addButton.setOnClickListener{
             val bundle = bundleOf("imgUrl" to imgUrl)
             findNavController().navigate(R.id.action_FirstFragment_to_ThirdFragment, bundle)

@@ -27,14 +27,11 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.encodeToJsonElement
 
 /**
- * A simple [Fragment] subclass as the second destination in the navigation.
+ * Add cat to your favorites
  */
 class ThirdFragment : Fragment() {
 
     private var _binding: FragmentThirdBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -50,9 +47,10 @@ class ThirdFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        //Get image Url from navigation
         var imgUrl: String = arguments?.getString("imgUrl").toString()
-        if(imgUrl != "") {
-            binding.validView.load(imgUrl)
+        if(imgUrl != null && imgUrl != "") {
+            binding.validView.load(imgUrl) //Display image on screen
         }
         else{
             val toast = Toast.makeText(
@@ -63,25 +61,32 @@ class ThirdFragment : Fragment() {
             toast.show()
             findNavController().navigate(R.id.action_ThirdFragment_to_FirstFragment)
         }
+
+        //Go to 'random cats' page
         binding.cancelButton.setOnClickListener {
             findNavController().navigate(R.id.action_ThirdFragment_to_FirstFragment)
         }
 
         binding.validButton.setOnClickListener {
+            //Read given name from textbox
             val name: String = binding.inputName.text.toString()
             if(name != "") {
+                //Create cat
                 val cat: Cell = Cell(name, imgUrl)
                 val jsonCat: JsonElement = Json.encodeToJsonElement(cat)
 
+                //Get favorites from shared preferences
                 val sharedPref = context?.getSharedPreferences("global", Context.MODE_PRIVATE)
                 var stringCatArray = sharedPref?.getString("json", "")
                 val jsonCatArray: JsonArray = Json.decodeFromString<JsonArray>(stringCatArray!!)
+
+                //Add cat to favorites
                 stringCatArray = Json.encodeToString(jsonCatArray.plus(jsonCat))
 
+                //Save new favorites in shared preferences
                 val edit = sharedPref?.edit()
                 edit?.putString("json", stringCatArray)
                 edit?.apply()
-                println(sharedPref?.all)
 
                 val toast = Toast.makeText(
                     activity?.applicationContext,
@@ -89,6 +94,7 @@ class ThirdFragment : Fragment() {
                     Toast.LENGTH_LONG
                 )
                 toast.show()
+                //Go back to first page
                 findNavController().navigate(R.id.action_ThirdFragment_to_FirstFragment)
             }
             else{

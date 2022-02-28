@@ -26,7 +26,7 @@ import org.json.JSONObject
 class RecyclerviewCellAdapter internal constructor(mCellList: MutableList<Cell>, context: Context?) :
     RecyclerView.Adapter<RecyclerviewCellAdapter.MyViewHolder>()
 {
-    private val cellList: MutableList<Cell>
+    private val cellList: MutableList<Cell> = mCellList
     private val context = context
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -49,6 +49,7 @@ class RecyclerviewCellAdapter internal constructor(mCellList: MutableList<Cell>,
     }
 
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        //Each Recycler View cell is made of cat image, cat name and delete button
         var text: TextView
         var img: ImageView
         var button: FloatingActionButton
@@ -59,10 +60,15 @@ class RecyclerviewCellAdapter internal constructor(mCellList: MutableList<Cell>,
             img = itemView.findViewById<ImageView>(R.id.cellImgView)
             button = itemView.findViewById<FloatingActionButton>(R.id.delButton)
 
+            //'Delete' button
             button.setOnClickListener{
+                //Get current favorites from shared preferences
                 val sharedPref = context?.getSharedPreferences("global", Context.MODE_PRIVATE)
                 val stringArray = sharedPref?.getString("json","")
                 val jsonArray: JSONArray = JSONArray(stringArray)
+
+                //Search current cat in favorites
+                //Put the different ones in a new json array
                 var newJsonArray: JSONArray = JSONArray()
                 for (i in 0 until jsonArray.length()) {
                     val cat: JSONObject = jsonArray.getJSONObject(i)
@@ -71,11 +77,14 @@ class RecyclerviewCellAdapter internal constructor(mCellList: MutableList<Cell>,
                         newJsonArray = newJsonArray.put(cat)
                     }
                 }
+
+                //Save new json array into shared preferences
                 val newStringArray = newJsonArray.toString()
                 val edit = sharedPref?.edit()
                 edit?.putString("json" , newStringArray)
                 edit?.apply()
 
+                //Remove cat cell in Recycler View
                 cellList.removeAt(layoutPosition)
                 notifyItemRemoved(layoutPosition)
 
@@ -92,7 +101,4 @@ class RecyclerviewCellAdapter internal constructor(mCellList: MutableList<Cell>,
 
     }
 
-    init {
-        cellList = mCellList
-    }
 }

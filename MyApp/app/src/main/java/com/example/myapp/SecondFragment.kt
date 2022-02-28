@@ -18,14 +18,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myapp.databinding.FragmentSecondBinding
 
 /**
- * A simple [Fragment] subclass as the second destination in the navigation.
+ * Display favorite cats in a RecyclerView
  */
 class SecondFragment : Fragment() {
 
     private var _binding: FragmentSecondBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
 
     private var cellsList = ArrayList<Cell>()
@@ -43,6 +40,7 @@ class SecondFragment : Fragment() {
 
     }
 
+    //Populate recycler view from the favorites in shared preferences
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val sharedPref = context?.getSharedPreferences("global",Context.MODE_PRIVATE)
@@ -72,6 +70,7 @@ class SecondFragment : Fragment() {
         recyclerView?.setItemAnimator(DefaultItemAnimator())
         recyclerView?.setAdapter(recyclerviewCellAdapter)
 
+        //Go to 'random cats' page
         binding.buttonSecond.setOnClickListener {
             findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
         }

@@ -28,16 +28,13 @@ class MyViewModel : ViewModel() {
 
     private fun prepareCells(): ArrayList<Cell> {
         val rawCells = ArrayList<Cell>()
-        if(initialCats != null && initialCats != "[]"){
-            val jsonCatArray: JSONArray = JSONArray(initialCats!!)
-            for (i in 0 until jsonCatArray.length()) {
-                val cat: JSONObject = jsonCatArray.getJSONObject(i)
-                val cell = Cell(cat.get("name").toString(), cat.get("imgUrl").toString())
-                rawCells.add(cell)
-            }
-        }
-        else {
 
+        val jsonCatArray: JSONArray = JSONArray(initialCats!!)
+
+        for (i in 0 until jsonCatArray.length()) {
+            val cat: JSONObject = jsonCatArray.getJSONObject(i)
+            val cell = Cell(cat.get("name").toString(), cat.get("imgUrl").toString())
+            rawCells.add(cell)
         }
 
         return rawCells
