@@ -1,24 +1,15 @@
 package com.example.myapp
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
-import android.util.LogPrinter
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.myapp.databinding.FragmentThirdBinding
-import com.squareup.picasso.Picasso
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -37,7 +28,7 @@ class ThirdFragment : Fragment() {
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         _binding = FragmentThirdBinding.inflate(inflater, container, false)
         return binding.root
@@ -48,7 +39,7 @@ class ThirdFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         //Get image Url from navigation
-        var imgUrl: String = arguments?.getString("imgUrl").toString()
+        val imgUrl: String = arguments?.getString("imgUrl").toString()
         if(imgUrl != null && imgUrl != "") {
             binding.validView.load(imgUrl) //Display image on screen
         }
@@ -72,13 +63,13 @@ class ThirdFragment : Fragment() {
             val name: String = binding.inputName.text.toString()
             if(name != "") {
                 //Create cat
-                val cat: Cell = Cell(name, imgUrl)
+                val cat = Cell(name, imgUrl)
                 val jsonCat: JsonElement = Json.encodeToJsonElement(cat)
 
                 //Get favorites from shared preferences
                 val sharedPref = context?.getSharedPreferences("global", Context.MODE_PRIVATE)
                 var stringCatArray = sharedPref?.getString("json", "")
-                val jsonCatArray: JsonArray = Json.decodeFromString<JsonArray>(stringCatArray!!)
+                val jsonCatArray: JsonArray = Json.decodeFromString(stringCatArray!!)
 
                 //Add cat to favorites
                 stringCatArray = Json.encodeToString(jsonCatArray.plus(jsonCat))

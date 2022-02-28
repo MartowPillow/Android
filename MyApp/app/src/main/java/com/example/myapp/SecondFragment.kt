@@ -2,15 +2,12 @@ package com.example.myapp
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.view.size
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -33,7 +30,7 @@ class SecondFragment : Fragment() {
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
-    ): View? {
+    ): View {
 
         _binding = FragmentSecondBinding.inflate(inflater, container, false)
         return binding.root
@@ -46,7 +43,7 @@ class SecondFragment : Fragment() {
         val sharedPref = context?.getSharedPreferences("global",Context.MODE_PRIVATE)
         val initialCats = sharedPref?.getString("json","")
         myViewModel.setInitialCats(initialCats)
-        myViewModel.getCells().observe(viewLifecycleOwner, Observer<List<Cell>>{ cells ->
+        myViewModel.getCells().observe(viewLifecycleOwner, { cells ->
             cellsList.addAll(cells)
 
             if(cellsList.size == 0){
@@ -66,9 +63,9 @@ class SecondFragment : Fragment() {
 
         val layoutManager: RecyclerView.LayoutManager = LinearLayoutManager(view.context)
 
-        recyclerView?.setLayoutManager(layoutManager)
-        recyclerView?.setItemAnimator(DefaultItemAnimator())
-        recyclerView?.setAdapter(recyclerviewCellAdapter)
+        recyclerView?.layoutManager = layoutManager
+        recyclerView?.itemAnimator = DefaultItemAnimator()
+        recyclerView?.adapter = recyclerviewCellAdapter
 
         //Go to 'random cats' page
         binding.buttonSecond.setOnClickListener {

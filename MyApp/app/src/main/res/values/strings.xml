@@ -11,4 +11,7 @@
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="favTextInfo">Give a name to this cat and save it to your favorites!</string>
+    <string name="cat_name">Cat Name!</string>
+    <string name="valid">Valid</string>
+    <string name="cancel">Cancel</string>
 </resources>

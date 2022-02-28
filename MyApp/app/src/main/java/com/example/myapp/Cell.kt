@@ -1,6 +1,5 @@
 package com.example.myapp
 
-import android.content.Context
 import kotlinx.serialization.*
 
 @Serializable
