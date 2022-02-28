@@ -9,6 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.navigation.fragment.findNavController
+import coil.load
+import coil.size.Precision
+import coil.size.Scale
+import coil.transform.CircleCropTransformation
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.squareup.picasso.Picasso
 import kotlinx.serialization.encodeToString
@@ -19,10 +23,10 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 
-class RecyclerviewCellAdapter internal constructor(mCellList: List<Cell>, context: Context?) :
+class RecyclerviewCellAdapter internal constructor(mCellList: MutableList<Cell>, context: Context?) :
     RecyclerView.Adapter<RecyclerviewCellAdapter.MyViewHolder>()
 {
-    private val cellList: List<Cell>
+    private val cellList: MutableList<Cell>
     private val context = context
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -34,9 +38,10 @@ class RecyclerviewCellAdapter internal constructor(mCellList: List<Cell>, contex
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val cell: Cell = cellList[position]
         holder.text.setText(cell.getName())
-        Picasso.with(holder.img.context)
-            .load(cell.getImgUrl())
-            .into(holder.img)
+        holder.img.load(cell.getImgUrl()){
+            precision(Precision.EXACT)
+            scale(Scale.FIT)
+        }
     }
 
     override fun getItemCount(): Int {
@@ -70,8 +75,9 @@ class RecyclerviewCellAdapter internal constructor(mCellList: List<Cell>, contex
                 val edit = sharedPref?.edit()
                 edit?.putString("json" , newStringArray)
                 edit?.apply()
-                //TODO: reload la page pour que la cell disparaisse, ou trouver mieux
-                cellList.drop(layoutPosition)
+
+                cellList.removeAt(layoutPosition)
+                notifyItemRemoved(layoutPosition)
 
                 val toast = Toast.makeText(
                     context?.applicationContext,

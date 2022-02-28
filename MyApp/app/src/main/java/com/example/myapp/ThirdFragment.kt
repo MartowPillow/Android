@@ -16,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import coil.load
 import com.example.myapp.databinding.FragmentThirdBinding
 import com.squareup.picasso.Picasso
 import kotlinx.serialization.decodeFromString
@@ -51,9 +52,7 @@ class ThirdFragment : Fragment() {
 
         var imgUrl: String = arguments?.getString("imgUrl").toString()
         if(imgUrl != "") {
-            Picasso.with(context)
-                .load(imgUrl)
-                .into(binding.validView);
+            binding.validView.load(imgUrl)
         }
         else{
             val toast = Toast.makeText(
@@ -70,26 +69,36 @@ class ThirdFragment : Fragment() {
 
         binding.validButton.setOnClickListener {
             val name: String = binding.inputName.text.toString()
-            val cat: Cell = Cell(name,imgUrl)
-            val jsonCat: JsonElement = Json.encodeToJsonElement(cat)
+            if(name != "") {
+                val cat: Cell = Cell(name, imgUrl)
+                val jsonCat: JsonElement = Json.encodeToJsonElement(cat)
 
-            val sharedPref = context?.getSharedPreferences("global",Context.MODE_PRIVATE)
-            var stringCatArray = sharedPref?.getString("json","")
-            val jsonCatArray: JsonArray = Json.decodeFromString<JsonArray>(stringCatArray!!)
-            stringCatArray = Json.encodeToString(jsonCatArray.plus(jsonCat))
+                val sharedPref = context?.getSharedPreferences("global", Context.MODE_PRIVATE)
+                var stringCatArray = sharedPref?.getString("json", "")
+                val jsonCatArray: JsonArray = Json.decodeFromString<JsonArray>(stringCatArray!!)
+                stringCatArray = Json.encodeToString(jsonCatArray.plus(jsonCat))
 
-            val edit = sharedPref?.edit()
-            edit?.putString("json" , stringCatArray)
-            edit?.apply()
-            println(sharedPref?.all)
+                val edit = sharedPref?.edit()
+                edit?.putString("json", stringCatArray)
+                edit?.apply()
+                println(sharedPref?.all)
 
-            val toast = Toast.makeText(
-                activity?.applicationContext,
-                "Cat successfully added to favorites!",
-                Toast.LENGTH_LONG
-            )
-            toast.show()
-            findNavController().navigate(R.id.action_ThirdFragment_to_FirstFragment)
+                val toast = Toast.makeText(
+                    activity?.applicationContext,
+                    "Cat successfully added to favorites!",
+                    Toast.LENGTH_LONG
+                )
+                toast.show()
+                findNavController().navigate(R.id.action_ThirdFragment_to_FirstFragment)
+            }
+            else{
+                val toast = Toast.makeText(
+                    activity?.applicationContext,
+                    "You must give this cat a name!",
+                    Toast.LENGTH_LONG
+                )
+                toast.show()
+            }
         }
     }
 

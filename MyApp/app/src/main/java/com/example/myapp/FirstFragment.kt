@@ -13,6 +13,7 @@ import android.graphics.BitmapFactory
 import android.graphics.Bitmap
 import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
+import coil.load
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -65,9 +66,7 @@ class FirstFragment : Fragment() {
                     val json = JSONObject(txt)
                     imgUrl = json.getString("url")
                     lifecycleScope.launch {
-                        Picasso.with(context)
-                            .load(imgUrl)
-                            .into(binding.imageView);
+                        binding.imageView.load(imgUrl)
                     }
                 }
             }

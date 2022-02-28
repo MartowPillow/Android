@@ -1,6 +1,7 @@
 package com.example.myapp
 
 import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -27,7 +28,7 @@ class MyViewModel : ViewModel() {
 
     private fun prepareCells(): ArrayList<Cell> {
         val rawCells = ArrayList<Cell>()
-        if(initialCats != null){
+        if(initialCats != null && initialCats != "[]"){
             val jsonCatArray: JSONArray = JSONArray(initialCats!!)
             for (i in 0 until jsonCatArray.length()) {
                 val cat: JSONObject = jsonCatArray.getJSONObject(i)
@@ -36,10 +37,7 @@ class MyViewModel : ViewModel() {
             }
         }
         else {
-            for (i in 0..10) {
-                val cell = Cell("ChatChat$i", "https://cdn2.thecatapi.com/images/bcb.jpg")
-                rawCells.add(cell)
-            }
+
         }
 
         return rawCells
