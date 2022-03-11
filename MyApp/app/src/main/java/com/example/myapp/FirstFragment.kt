@@ -1,5 +1,6 @@
 package com.example.myapp
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -34,9 +35,16 @@ class FirstFragment : Fragment() {
             savedInstanceState: Bundle?
     ): View {
 
+        //first time
+        val sharedPref = context?.getSharedPreferences("global", Context.MODE_PRIVATE)
+        if(!sharedPref?.all.toString().contains("json")){
+            val edit = sharedPref?.edit()
+            edit?.putString("json", "[]")
+            edit?.apply()
+        }
+
         _binding = FragmentFirstBinding.inflate(inflater, container, false)
         return binding.root
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

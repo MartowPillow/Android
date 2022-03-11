@@ -8,6 +8,8 @@ import android.view.View
 
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.os.bundleOf
+import androidx.navigation.findNavController
 import coil.load
 import coil.size.Precision
 import coil.size.Scale
@@ -35,6 +37,12 @@ class RecyclerviewCellAdapter internal constructor(mCellList: MutableList<Cell>,
         holder.img.load(cell.getImgUrl()){
             precision(Precision.EXACT)
             scale(Scale.FIT)
+        }
+
+        //Go to 'full picture' page, with the image Url
+        holder.img.setOnClickListener{view ->
+            val bundle = bundleOf("imgUrl" to cell.getImgUrl())
+            view.findNavController().navigate(R.id.action_SecondFragment_to_FourthFragment, bundle)
         }
     }
 
